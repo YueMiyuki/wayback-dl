@@ -20,7 +20,6 @@ import { ParallelDownloader } from "./downloader.ts";
 async function main() {
   printBanner();
 
-  
   printSection("Configuration");
 
   const domain = await Input.prompt({
@@ -31,12 +30,10 @@ async function main() {
       return true;
     },
     transform: (value) => {
-      
       return value.trim();
     },
   });
 
-  
   printSection("Auto Discovery");
 
   const timestampInfos = await getAvailableTimestamps(domain);
@@ -47,7 +44,6 @@ async function main() {
     Deno.exit(1);
   }
 
-  
   console.log(`\n  ${style.bold("Available Snapshots:")}\n`);
 
   const selectedTimestamps = await Checkbox.prompt({
@@ -57,7 +53,7 @@ async function main() {
         style.dim(`| ${info.mimetype} | ${formatBytes(info.size)}`)
       }`,
       value: info.timestamp,
-      checked: index === 0, 
+      checked: index === 0,
     })),
     minOptions: 1,
   });
@@ -66,8 +62,6 @@ async function main() {
     `Selected ${style.bold(selectedTimestamps.length.toString())} timestamp(s)`,
   );
 
-  
-  
   printSection("Fetching Available Assets");
 
   const { snapshots, totalAssets } = await fetchAllUrls(domain, {});
@@ -83,7 +77,6 @@ async function main() {
     } unique URLs (${totalAssets} total assets)`,
   );
 
-  
   const byMimeType = snapshots.reduce((acc, s) => {
     const type = s.mimetype.split(";")[0].trim();
     acc[type] = (acc[type] || 0) + 1;
@@ -101,7 +94,6 @@ async function main() {
       console.log(`    ${style.dim(type.padEnd(30))} ${bar} ${count}`);
     });
 
-  
   const contentTypes = await Checkbox.prompt({
     message: `${icons.file} Select content types to download`,
     options: [
@@ -118,7 +110,6 @@ async function main() {
     ],
   });
 
-  
   const filteredSnapshots = snapshots.filter((s) => {
     const mime = s.mimetype.split(";")[0].trim();
     return contentTypes.some((ct) => {
@@ -142,17 +133,14 @@ async function main() {
 
   printInfo(`${filteredSnapshots.length} files selected for download`);
 
-  
   const estimatedSize = filteredSnapshots.reduce(
     (acc, s) => acc + (parseInt(s.length) || 0),
     0,
   );
   printInfo(`Estimated download size: ${formatBytes(estimatedSize)}`);
 
-  
   printSection("Download Settings");
 
-  
   let domainName: string;
   try {
     const url = domain.startsWith("http") ? domain : `https://${domain}`;
@@ -177,7 +165,6 @@ async function main() {
     max: 20,
   });
 
-  
   const confirm = await Confirm.prompt({
     message: `Download ${
       style.bold(filteredSnapshots.length.toString())
@@ -190,33 +177,26 @@ async function main() {
     Deno.exit(0);
   }
 
-  
   await ensureDir(outputDir);
 
-  
   printSection("Downloading");
 
   const downloader = new ParallelDownloader(outputDir, concurrency, 3, 30000);
 
-  
-  
   const downloadTimestamp = selectedTimestamps[0];
   printInfo(
     `Using timestamp: ${style.cyan(formatTimestamp(downloadTimestamp))}`,
   );
 
-  
   downloader.addTasks(
     filteredSnapshots.map((s) => ({
       url: s.original,
-      timestamp: downloadTimestamp, 
+      timestamp: downloadTimestamp,
     })),
   );
 
-  
   const result = await downloader.download();
 
-  
   printSection("Summary");
 
   console.log(`
@@ -234,7 +214,6 @@ async function main() {
   ${icons.folder} ${style.yellow("Output:")} ${outputDir}
 `);
 
-  
   if (result.failed > 0) {
     const retryFailed = await Confirm.prompt({
       message: "Would you like to retry failed downloads?",
@@ -259,7 +238,6 @@ async function main() {
     }
   }
 
-  
   const reportPath = join(outputDir, "download-report.json");
   const report = {
     domain,
@@ -286,7 +264,6 @@ async function main() {
     } ${icons.sparkles}\n`,
   );
 }
-
 
 main().catch((error) => {
   printError(`Fatal error: ${error.message}`);

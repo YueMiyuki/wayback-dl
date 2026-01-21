@@ -1,5 +1,3 @@
-
-
 const colors = {
   reset: "\x1b[0m",
   bright: "\x1b[1m",
@@ -68,7 +66,7 @@ export function printBanner(): void {
   const banner = `
 ${
     style.cyan(
-      "╔════════════════════════════════════════════════════════════════╗",
+      "╔═════════════════════════════════════════════════════════════════╗",
     )
   }
 ${style.cyan("║")}   ${
@@ -115,18 +113,18 @@ ${style.cyan("║")}   ${
   }   ${style.cyan("║")}
 ${
     style.cyan("║")
-  }                                                                ${
+  }                                                                 ${
     style.cyan("║")
   }
 ${style.cyan("║")}      ${
     style.bold(style.white("Wayback Machine Downloader"))
-  } ${style.dim("v1.0.0")}                        ${style.cyan("║")}
+  } ${style.dim("v1.0.0")}                          ${style.cyan("║")}
 ${style.cyan("║")}      ${
     style.dim("Download archived websites with style")
-  } ${icons.sparkles}                  ${style.cyan("║")}
+  } ${icons.sparkles}                   ${style.cyan("║")}
 ${
     style.cyan(
-      "╚════════════════════════════════════════════════════════════════╝",
+      "╚═════════════════════════════════════════════════════════════════╝",
     )
   }
 `;
@@ -255,7 +253,7 @@ export class ProgressBar {
   finish(): void {
     this.current = this.total;
     this.render();
-    console.log(); 
+    console.log();
   }
 }
 

@@ -61,15 +61,12 @@ export class ParallelDownloader {
         pathname = "/index.html";
       }
 
-      
       if (!pathname.includes(".") || pathname.endsWith("/")) {
         pathname = pathname.replace(/\/$/, "") + "/index.html";
       }
 
-      
       pathname = pathname.replace(/\/+/g, "/");
 
-      
       let filename = pathname;
       if (parsed.search) {
         const queryHash = this.hashString(parsed.search);
@@ -82,7 +79,6 @@ export class ParallelDownloader {
 
       return join(this.outputDir, parsed.hostname, filename);
     } catch {
-      
       const sanitized = url
         .replace(/[^a-zA-Z0-9.-]/g, "_")
         .slice(0, 200);
@@ -126,10 +122,8 @@ export class ParallelDownloader {
         const data = await response.arrayBuffer();
         task.size = data.byteLength;
 
-        
         await ensureDir(dirname(task.outputPath));
 
-        
         await Deno.writeFile(task.outputPath, new Uint8Array(data));
 
         return true;
@@ -137,7 +131,6 @@ export class ParallelDownloader {
         lastError = error instanceof Error ? error : new Error(String(error));
 
         if (attempt < this.retryAttempts) {
-          
           await new Promise((resolve) =>
             setTimeout(resolve, Math.pow(2, attempt) * 1000)
           );
